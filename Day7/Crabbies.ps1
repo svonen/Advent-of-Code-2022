@@ -36,17 +36,15 @@ $Best = 9999999999999
     }
 
 }
-$Best
+Write-Host "Answer 1 fuel $Best"
 
-$Best2 = 9999999999999
 $Coninue = $true
 
-$BestPosition = 7
 $IncreasteNext = $true
 $x1 = 0
 $y1 = Get-AdvancedFuelcost -CrabPositions $InitialState -Position $x1
 $Step = 256
-$counter = 1
+$counter = 2
 while ($Coninue) {
     
     if ($IncreasteNext) {
@@ -69,7 +67,8 @@ while ($Coninue) {
         $x1 = $x2
         $y1 = $y2
     }
-    if ($counter = 0) {
+    if ($counter -eq 0) {
         $Coninue = $false
     }
 }
+Write-Host "Answer position $x1 fuel $y1"
