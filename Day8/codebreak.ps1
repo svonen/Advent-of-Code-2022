@@ -22,6 +22,11 @@ for ($i = 0; $i -lt $Input.Count; $i+=2) {
     $Array = $Input[$i].Split()
     $Inputarray.Add($Array)
 }
+$Outputtarray =  New-Object -TypeName "System.Collections.ArrayList"
+for ($i = 1; $i -lt $Input.Count; $i+=2) {
+    $Array = $Input[$i].Split()
+    $Outputtarray.Add($Array)
+}
 
 function get-zero {
     param (
@@ -78,7 +83,6 @@ function get-two {
         }
     }
 }
-get-two -code $Inputarray[0]
 
 function get-three {
     param (
@@ -134,17 +138,16 @@ function get-five {
     }
     foreach ($word in $Code){
         $car = $word.ToCharArray()
-        if (!$word.contains($cval) -and $word -ne $six) {
+        if (!$word.contains($cval) -and $word.length -eq 5) {
             return $word
         }
     }
 }
-get-five -Code $Inputarray[0] -one "ab" -six "cdfgeb"
 
 function get-six {
     param (
         $Code,
-        $one
+        $nine
     )
     $occurances = (0,0,0,0,0,0,0)
     foreach ($item in $Code){
@@ -168,12 +171,11 @@ function get-six {
         }
     }
     foreach ($item in $Code){
-        if ($item.length -eq 6 -and !$item.contains($cval)) {
+        if (!$item.contains($cval) -and $item.length -eq 6 -and $item -ne $nine) {
             return $item
         }
     }
 }
-get-six -Code $Inputarray[0] -one "ab"
 function get-seven {
     param (
         $Code
@@ -214,4 +216,51 @@ function get-nine {
         }
     }
 }
-get-nine -Code $Inputarray[0] -four "eafb"
+$Counter = 0
+0..($Inputarray.length.Length-1) | ForEach-Object {
+    $sequence =  $Inputarray[$_]
+    $Lookup = @{"test" = 0}
+    $one = get-one -Code $Sequence
+    $ones = -join ($one.TocharArray()| Sort-Object)
+    $Lookup[$ones] = "1" 
+    $two = get-two -Code $Sequence
+    $twos = -join ($two.TocharArray()| Sort-Object)
+    $Lookup[$twos] = "2"
+    $four = get-four -Code $Sequence
+    $fours = -join ($four.TocharArray() | Sort-Object)
+    $Lookup[$fours] = "4"
+    $seven = get-seven -Code $Sequence
+    $sevens = -join ($seven.TocharArray()| Sort-Object)
+    $Lookup[$sevens] = "7"
+    $eight = get-eigth -Code $Sequence
+    $eights = -join ($eight.TocharArray()| Sort-Object)
+    $Lookup[$eights]= "8"
+    $nine = get-nine -Code $Sequence -four $four
+    $nines = -join ($nine.TocharArray()| Sort-Object)
+    $Lookup[$nines] = "9"
+    $six = get-six -Code $Sequence -nine $nine
+    $sixs = -join ($six.TocharArray()| Sort-Object)
+    $Lookup[$sixs] = "6"
+    $zero = get-zero -code $Sequence -six $six -nine $nine
+    $zeros = -join ($zero.TocharArray()| Sort-Object)
+    $Lookup[$zeros] = "0"
+    $five = get-five -Code $Sequence -one $one -six $six
+    $fives = -join ($five.TocharArray()| Sort-Object)
+    $Lookup[$fives] = "5"
+    $three = get-three -code $sequence -five $five -two $two
+    $threes = -join ($three.TocharArray()| Sort-Object)
+    $Lookup[$threes] = "3"
+    
+    $answer = ""
+    foreach ($number in $Outputtarray[$_]){
+        $key = $number.TocharArray() | sort-object
+        $key = -join $key
+        $answer += $Lookup[$key]
+
+        #$x = $Lookup[$key]
+        #write-host "$key  and $x"
+        
+    }
+    $counter += [int]$answer
+}
+$counter 
